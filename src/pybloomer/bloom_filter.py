@@ -1,0 +1,106 @@
+import numpy as np
+
+class BloomFilter(object):
+    MAX_SLICE_SIZE = 2147483647
+
+    def __init__(self,
+                max_false_positive_rate: float = 0.01,
+                num_hashes: int = 4,
+                layer_size: int = 32000000) -> None:
+
+        if max_false_positive_rate < 0.0 or max_false_positive_rate > 1.0:
+            raise ValueError(f'Max false positive rate must be between 0 and 1, {max_false_positive_rate} given.')
+
+        if num_hashes < 1:
+            raise ValueError(f'Num hashes must be greater than 1, {num_hashes} given.')
+
+        if layer_size < num_hashes:
+            raise ValueError(f'Layer size must be greater than {num_hashes}, {layer_size} given.')
+
+        slice_size = int(round(layer_size / num_hashes))
+
+        if slice_size > self.MAX_SLICE_SIZE:
+            raise ValueError(f'Slice size must be less than {self.MAX_SLICE_SIZE}, {slice_size} given.')
+
+        self.max_false_positive_rate = max_false_positive_rate
+        self.num_hashes = num_hashes
+        self.layer_size = layer_size
+        self.slice_size = slice_size
+        self.layers = [np.zeros(layer_size, dtype='bool')]
+        self.m = layer_size
+        self.n = 0
+
+    def utilization(self) -> float:
+        """Return the proportion of bits that are currently set"""
+        return self.n / self.m
+
+    def capacity(self) -> float:
+        """Return the proportion of bits that are currently not set"""
+        return 1.0 - self.utilization()
+
+    def false_positive_rate(self) -> float:
+        """Return the probability of recording a false positive"""
+        return self.utilization() ** self.num_hashes
+
+    def insert(self, token: str) -> None:
+        """Insert a token into the filter"""
+        offsets = self.hash(token)
+
+        layer = self.layers[-1]
+
+        changed = False
+
+        for offset in offsets:
+            if layer[offset] == False:
+                layer[offset] = True
+
+                self.n += 1
+
+                changed = True
+
+        if changed and self.false_positive_rate() > self.max_false_positive_rate:
+            self.add_layer()
+
+    def exists(self, token: str) -> bool:
+        """Does the given token exist within the filter?"""
+        offsets = self.hash(token)
+
+        for layer in self.layers:
+            hits = 0
+
+            for offset in offsets:
+                if layer[offset] == False:
+                    break
+
+                hits += 1
+
+            if hits == self.num_hashes:
+                return True
+
+        return False
+
+    def add_layer(self) -> None:
+        """
+        Add another layer to the filter for maintaining the false positivity rate
+        below the threshold.
+        """
+        self.layers.append(np.zeros(layer_size, dtype='bool'))
+
+        self.m += self.layer_size
+
+    def hash(self, token: str) -> list:
+        """Return a list of filter offsets from a given token."""
+        offsets = []
+
+        for i in range(1, self.num_hashes + 1):
+            offset = hash(f'{i}{token}')
+
+            offset %= self.slice_size
+            offset *= i
+
+            offsets.append(int(offset))
+
+        return offsets
+
+    def __repr__(self):
+        return f'Bloom Filter (current false positivity rate: {self.false_positive_rate()})'

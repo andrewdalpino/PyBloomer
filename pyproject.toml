@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyBloomer"
+dynamic = ["version"]
+requires-python = ">= 3.10"
+dependencies = [
+  "numpy>=1.19.5",
+]
+authors = [
+  {name = "Andrew DalPino", email = "support@andrewdalpino.com"},
+]
+description = "An autoscaling Bloom Filter with ultra-low memory footprint."
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.urls]
+Homepage = "https://www.djangoproject.com/"
+Documentation = "https://docs.djangoproject.com/"
+Source = "https://github.com/django/django"

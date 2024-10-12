@@ -36,20 +36,24 @@ class BloomFilter(object):
         self.layers = [np.zeros(layer_size, dtype='bool')]
         self.m = layer_size
 
+    @property
     def num_layers(self) -> int:
         return len(self.layers)
 
+    @property
     def utilization(self) -> float:
         """Return the proportion of bits that are currently set"""
         return self.n / self.m
 
+    @property
     def capacity(self) -> float:
         """Return the proportion of bits that are currently not set"""
-        return 1.0 - self.utilization()
+        return 1.0 - self.utilization
 
+    @property
     def false_positive_rate(self) -> float:
         """Return the probability of recording a false positive"""
-        return self.utilization() ** self.num_hashes
+        return self.utilization ** self.num_hashes
 
     def insert(self, token: str) -> None:
         """Insert a token into the filter"""
@@ -67,7 +71,7 @@ class BloomFilter(object):
 
                 changed = True
 
-        if changed and self.false_positive_rate() > self.max_false_positive_rate:
+        if changed and self.false_positive_rate > self.max_false_positive_rate:
             self._add_layer()
 
     def exists(self, token: str) -> bool:
@@ -116,7 +120,7 @@ class BloomFilter(object):
 
                 exists = False
 
-        if not exists and self.false_positive_rate() > self.max_false_positive_rate:
+        if not exists and self.false_positive_rate > self.max_false_positive_rate:
             self._add_layer()
 
         return exists

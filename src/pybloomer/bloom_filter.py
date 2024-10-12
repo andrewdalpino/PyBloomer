@@ -1,7 +1,14 @@
 import numpy as np
 
 class BloomFilter(object):
+    """
+    A probabilistic data structure that estimates the prior occurrence
+    of a given item with a maximum false positive rate. 
+    """
+    
     MAX_SLICE_SIZE = 2147483647
+
+    n = 0
 
     def __init__(self,
                 max_false_positive_rate: float = 0.01,
@@ -28,7 +35,6 @@ class BloomFilter(object):
         self.slice_size = slice_size
         self.layers = [np.zeros(layer_size, dtype='bool')]
         self.m = layer_size
-        self.n = 0
 
     def utilization(self) -> float:
         """Return the proportion of bits that are currently set"""
@@ -78,6 +84,36 @@ class BloomFilter(object):
                 return True
 
         return False
+
+    def exists_or_insert(self, token: str) -> bool:
+        """Does the token exist in the filter? If not, then insert it."""
+        offsets = self.hash(token)
+
+        for layer in self.layers[0:-2]:
+            hits = 0
+
+            for offset in offsets:
+                if layer[offset] == False:
+                    break
+
+                hits += 1
+
+            if hits == self.num_hashes:
+                return True
+
+        layer = self.layers[-1]
+
+        exists = True
+
+        for offset in offsets:
+            if layer[offset] == False:
+                layer[offset] = True
+
+                self.n += 1
+
+                exists = False
+
+        return exists
 
     def add_layer(self) -> None:
         """

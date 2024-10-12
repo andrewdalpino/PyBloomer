@@ -26,8 +26,9 @@ jobs:
         run: pip install .
 
       - name: Static analysis
-        run: pip install mypy
-        run: mypy ./src
+        run:
+          - pip install mypy
+          - mypy ./src
 
       - name: Run tests
         run: python -m unittest

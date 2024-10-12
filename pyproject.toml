@@ -12,7 +12,7 @@ dependencies = [
 authors = [
   {name = "Andrew DalPino", email = "support@andrewdalpino.com"},
 ]
-description = "An autoscaling Bloom Filter with ultra-low memory footprint."
+description = "PyBloomer is an implementation of the OkBloomer algorithm, an autoscaling Bloom filter with ultra-low memory footprint for Python."
 readme = "README.md"
 license = {text = "MIT"}
 

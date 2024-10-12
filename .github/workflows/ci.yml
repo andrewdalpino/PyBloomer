@@ -1,0 +1,29 @@
+name: "Code Checks"
+
+on:
+- push
+- pull_request
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      
+      matrix:
+        os: [ubuntu-latest]
+        python:
+          - "3.10"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: pip install .
+
+      - name: Run tests
+        run: python -m unittest

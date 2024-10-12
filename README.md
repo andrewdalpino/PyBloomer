@@ -46,4 +46,4 @@ True
 ```
 
 ## References
-- [1] A. DalPino. (2021). OkBloomer, a novel autoscaling Bloom Filter for PHP. [link](https://github.com/andrewdalpino/OkBloomer).
+- [1] A. DalPino. (2021). OkBloomer, a novel autoscaling Bloom Filter for PHP [[link](https://github.com/andrewdalpino/OkBloomer)].

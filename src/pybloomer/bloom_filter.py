@@ -8,7 +8,7 @@ class BloomFilter(object):
     
     MAX_SLICE_SIZE = 2147483647
 
-    n = 0
+    n = 0 # The number of bits currently stored in the filter
 
     def __init__(self,
                 max_false_positive_rate: float = 0.01,
@@ -36,6 +36,9 @@ class BloomFilter(object):
         self.layers = [np.zeros(layer_size, dtype='bool')]
         self.m = layer_size
 
+    def num_layers(self) -> int:
+        return len(self.layers)
+
     def utilization(self) -> float:
         """Return the proportion of bits that are currently set"""
         return self.n / self.m
@@ -50,7 +53,7 @@ class BloomFilter(object):
 
     def insert(self, token: str) -> None:
         """Insert a token into the filter"""
-        offsets = self.hash(token)
+        offsets = self._hash(token)
 
         layer = self.layers[-1]
 
@@ -65,11 +68,11 @@ class BloomFilter(object):
                 changed = True
 
         if changed and self.false_positive_rate() > self.max_false_positive_rate:
-            self.add_layer()
+            self._add_layer()
 
     def exists(self, token: str) -> bool:
         """Does the given token exist within the filter?"""
-        offsets = self.hash(token)
+        offsets = self._hash(token)
 
         for layer in self.layers:
             hits = 0
@@ -87,7 +90,7 @@ class BloomFilter(object):
 
     def exists_or_insert(self, token: str) -> bool:
         """Does the token exist in the filter? If not, then insert it."""
-        offsets = self.hash(token)
+        offsets = self._hash(token)
 
         for layer in self.layers[0:-2]:
             hits = 0
@@ -113,18 +116,21 @@ class BloomFilter(object):
 
                 exists = False
 
+        if not exists and self.false_positive_rate() > self.max_false_positive_rate:
+            self._add_layer()
+
         return exists
 
-    def add_layer(self) -> None:
+    def _add_layer(self) -> None:
         """
         Add another layer to the filter for maintaining the false positivity rate
         below the threshold.
         """
-        self.layers.append(np.zeros(layer_size, dtype='bool'))
+        self.layers.append(np.zeros(self.layer_size, dtype='bool'))
 
         self.m += self.layer_size
 
-    def hash(self, token: str) -> list:
+    def _hash(self, token: str) -> list:
         """Return a list of filter offsets from a given token."""
         offsets = []
 
@@ -137,6 +143,3 @@ class BloomFilter(object):
             offsets.append(int(offset))
 
         return offsets
-
-    def __repr__(self):
-        return f'Bloom Filter (current false positivity rate: {self.false_positive_rate()})'

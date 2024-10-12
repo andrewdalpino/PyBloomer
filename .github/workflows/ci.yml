@@ -25,5 +25,9 @@ jobs:
       - name: Install dependencies
         run: pip install .
 
+      - name: Static analysis
+        run: pip install mypy
+        run: mypy ./src
+
       - name: Run tests
         run: python -m unittest

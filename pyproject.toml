@@ -17,6 +17,6 @@ readme = "README.md"
 license = {text = "MIT"}
 
 [project.urls]
-Homepage = "https://www.djangoproject.com/"
-Documentation = "https://docs.djangoproject.com/"
-Source = "https://github.com/django/django"
+Homepage = "https://github.com/andrewdalpino/PyBloomer"
+Documentation = "https://github.com/andrewdalpino/PyBloomer/README.md"
+Source = "https://github.com/andrewdalpino/PyBloomer"

@@ -92,7 +92,7 @@ class BloomFilter(object):
         """Does the token exist in the filter? If not, then insert it."""
         offsets = self._hash(token)
 
-        for layer in self.layers[0:-2]:
+        for layer in self.layers[:-1]:
             hits = 0
 
             for offset in offsets:

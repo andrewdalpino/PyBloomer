@@ -8,11 +8,12 @@ version = "0.0.1"
 requires-python = ">= 3.10"
 dependencies = [
   "numpy>=1.19.5",
+  "nptyping>=2.5.0",
 ]
 authors = [
   {name = "Andrew DalPino", email = "support@andrewdalpino.com"},
 ]
-description = "PyBloomer is an Python implementation of the OkBloomer algorithm, an autoscaling Bloom filter with ultra-low memory footprint."
+description = "A Python implementation of the OkBloomer algorithm, an autoscaling Bloom filter with ultra-low memory footprint."
 readme = "README.md"
 license = {text = "MIT"}
 

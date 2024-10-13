@@ -9,9 +9,6 @@ class BloomFilter(object):
     
     MAX_SLICE_SIZE = 2147483647
 
-    n = 0 # The number of bits currently stored in the filter.
-    m = 0 # The maximum number of bits that can be stored in the filter.
-
     def __init__(self,
                 max_false_positive_rate: float = 0.01,
                 num_hashes: int = 4,
@@ -36,6 +33,8 @@ class BloomFilter(object):
         self.layer_size = layer_size
         self.slice_size = slice_size
         self.layers: list[NDArray] = []
+        self.n = 0 # The number of bits currently stored in the filter.
+        self.m = 0 # The maximum number of bits that can be stored in the filter.
 
         self._add_layer()
 

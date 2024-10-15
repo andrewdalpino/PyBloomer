@@ -13,14 +13,14 @@ Install Ok Bloomer using a Python package manager, example pip:
 pip install okbloomer
 ```
 
-### Parameters
+## Parameters
 | # | Name | Default | Type | Description |
 |---|---|---|---|---|
-| 1 | max_false_positive_rate | 0.01 | float | The upper false positivity rate bounds. |
+| 1 | max_false_positive_rate | 0.01 | float | The upper bound on the false positivity rate. |
 | 2 | num_hashes | 4 | int | The number of hash functions used, i.e. the number of slices per layer. |
 | 3 | layer_size | 32000000 | int | The size of each layer of the filter in bits. |
 
-### Example
+## Example Usage
 
 ```python
 import okbloomer

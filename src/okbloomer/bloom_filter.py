@@ -136,9 +136,7 @@ class BloomFilter(object):
         return exists
 
     def _add_layer(self) -> None:
-        """
-        Add another layer to the filter for maintaining the false positivity rate below the threshold.
-        """
+        """Add another layer to the filter for maintaining the false positivity rate below the threshold."""
         self.layers.append(np.zeros(self.layer_size, dtype='bool'))
 
         self.m += self.layer_size

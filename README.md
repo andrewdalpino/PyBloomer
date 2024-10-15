@@ -7,7 +7,7 @@ An implementation of the OkBloomer algorithm, an autoscaling [Bloom filter](http
 - **Open-source** and free to use commercially
 
 ## Installation
-Install Ok Bloomer using a Python package manager, example pip:
+Install DNA Hash using a Python [package manager](https://packaging.python.org/en/latest/tutorials/installing-packages/), example pip:
 
 ```
 pip install okbloomer

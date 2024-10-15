@@ -7,13 +7,14 @@ name = "OkBloomer"
 version = "0.0.1"
 requires-python = ">= 3.10"
 dependencies = [
-  "numpy>=1.19.5",
+  "mmh3>5.0.0",
   "nptyping>=2.5.0",
+  "numpy>=1.19.5",
 ]
 authors = [
   {name = "Andrew DalPino", email = "support@andrewdalpino.com"},
 ]
-description = "A Python implementation of the OkBloomer algorithm, an autoscaling Bloom filter with ultra-low memory footprint."
+description = "An implementation of the OkBloomer algorithm, an autoscaling Bloom filter with ultra-low memory footprint for Python."
 readme = "README.md"
 license = {text = "MIT"}
 

@@ -5,7 +5,7 @@ import string
 import okbloomer
 
 class TestBloomFilter(unittest.TestCase):
-    def test_basic(self):
+    def test_insert_and_exists(self):
         filter = okbloomer.BloomFilter()
 
         self.assertEqual(filter.false_positive_rate, 0)

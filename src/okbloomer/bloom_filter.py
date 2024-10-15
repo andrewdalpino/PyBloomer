@@ -1,5 +1,9 @@
 import numpy as np
+import mmh3
+
 from nptyping import NDArray
+
+MAX_32_BIT_UNSIGNED_INTEGER = 4294967295
 
 class BloomFilter(object):
     """
@@ -7,7 +11,11 @@ class BloomFilter(object):
     of a given item with a maximum false positive rate. 
     """
     
-    MAX_SLICE_SIZE = 2147483647
+    MAX_HASH_DIGEST = MAX_32_BIT_UNSIGNED_INTEGER
+
+    MAX_SLICE_SIZE = MAX_HASH_DIGEST
+
+    MAX_HASH_FUNCTIONS = int(MAX_SLICE_SIZE / 2)
 
     def __init__(self,
                 max_false_positive_rate: float = 0.01,
@@ -17,8 +25,8 @@ class BloomFilter(object):
         if max_false_positive_rate < 0.0 or max_false_positive_rate > 1.0:
             raise ValueError(f'Max false positive rate must be between 0 and 1, {max_false_positive_rate} given.')
 
-        if num_hashes < 1:
-            raise ValueError(f'Num hashes must be greater than 1, {num_hashes} given.')
+        if num_hashes < 1 or num_hashes > self.MAX_HASH_FUNCTIONS:
+            raise ValueError(f'Num hashes must be between 1 and {self.MAX_HASH_FUNCTIONS}, {num_hashes} given.')
 
         if layer_size < num_hashes:
             raise ValueError(f'Layer size must be greater than {num_hashes}, {layer_size} given.')
@@ -140,7 +148,7 @@ class BloomFilter(object):
         offsets = []
 
         for i in range(1, self.num_hashes + 1):
-            offset = hash(f'{i}{token}')
+            offset = mmh3.hash(token, seed=i, signed=False)
 
             offset %= self.slice_size
             offset *= i

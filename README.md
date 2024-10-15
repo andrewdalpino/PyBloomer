@@ -6,6 +6,13 @@ An implementation of the OkBloomer algorithm, an autoscaling [Bloom filter](http
 - **Bounded** maximum false positive rate
 - **Open-source** and free to use commercially
 
+## Installation
+Install Ok Bloomer using a Python package manager, example pip:
+
+```
+pip install okbloomer
+```
+
 ### Parameters
 | # | Name | Default | Type | Description |
 |---|---|---|---|---|

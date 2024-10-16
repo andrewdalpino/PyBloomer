@@ -1,12 +1,13 @@
-import unittest
 import random
 import string
 
-import okbloomer
+from okbloomer import BloomFilter
 
-class TestBloomFilter(unittest.TestCase):
+from unittest import TestCase
+
+class TestBloomFilter(TestCase):
     def test_insert_and_exists(self):
-        filter = okbloomer.BloomFilter()
+        filter = BloomFilter()
 
         self.assertEqual(filter.false_positive_rate, 0)
 
@@ -27,24 +28,21 @@ class TestBloomFilter(unittest.TestCase):
         self.assertFalse(filter.exists('baz'))
 
     def test_exists_or_insert(self):
-        filter = okbloomer.BloomFilter()
+        filter = BloomFilter()
 
         self.assertFalse(filter.exists_or_insert('foo'))
-
         self.assertTrue(filter.exists_or_insert('foo'))
 
         self.assertFalse(filter.exists_or_insert('bar'))
-
         self.assertTrue(filter.exists_or_insert('bar'))
 
         self.assertFalse(filter.exists_or_insert('baz'))
-
         self.assertTrue(filter.exists_or_insert('baz'))
 
     def test_autoscaling(self):
         random.seed(1)
 
-        filter = okbloomer.BloomFilter(
+        filter = BloomFilter(
             max_false_positive_rate=0.001,
             num_hashes=4,
             layer_size=320000,
@@ -59,11 +57,11 @@ class TestBloomFilter(unittest.TestCase):
 
         filter.insert('bar')
 
+        self.assertTrue(filter.exists('foo'))
+        self.assertTrue(filter.exists('bar'))
+        self.assertFalse(filter.exists('baz'))
+
         self.assertEqual(filter.num_layers, 6)
         self.assertLessEqual(filter.false_positive_rate, 0.001)
         self.assertLessEqual(filter.utilization, 1.0)
         self.assertGreater(filter.capacity, 0.0)
-
-        self.assertTrue(filter.exists('foo'))
-        self.assertTrue(filter.exists('bar'))
-        self.assertFalse(filter.exists('baz'))

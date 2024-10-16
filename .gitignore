@@ -7,6 +7,7 @@ dist/
 lib/
 lib64/
 wheels/
+out/
 *.egg-info/
 .installed.cfg
 *.egg

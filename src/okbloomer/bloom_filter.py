@@ -15,7 +15,7 @@ class BloomFilter(object):
 
     MAX_SLICE_SIZE = MAX_HASH_DIGEST
 
-    MAX_HASH_FUNCTIONS = int(MAX_SLICE_SIZE / 2)
+    MAX_HASH_FUNCTIONS = MAX_SLICE_SIZE // 2
 
     def __init__(self,
                 max_false_positive_rate: float = 0.01,
@@ -31,7 +31,7 @@ class BloomFilter(object):
         if layer_size < num_hashes:
             raise ValueError(f'Layer size must be greater than {num_hashes}, {layer_size} given.')
 
-        slice_size = int(round(layer_size / num_hashes))
+        slice_size = layer_size // num_hashes
 
         if slice_size > self.MAX_SLICE_SIZE:
             raise ValueError(f'Slice size must be less than {self.MAX_SLICE_SIZE}, {slice_size} given.')

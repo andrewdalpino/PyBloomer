@@ -18,7 +18,7 @@ pip install okbloomer
 |---|---|---|---|---|
 | 1 | max_false_positive_rate | 0.01 | float | The upper bound on the false positivity rate. |
 | 2 | num_hashes | 4 | int | The number of hash functions used, i.e. the number of slices per layer. |
-| 3 | layer_size | 32000000 | int | The size of each layer of the filter in bits. |
+| 3 | layer_size | 32000000 | int | The size of each layer of the filter in bits. Ideal sizes can be divided evenly by `num_hashes`.|
 
 ## Example Usage
 

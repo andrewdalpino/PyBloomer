@@ -7,6 +7,18 @@ from unittest import TestCase
 
 
 class TestBloomFilter(TestCase):
+    def test_instantiate(self):
+        filter = BloomFilter(
+            max_false_positive_rate=0.001,
+            num_hashes=16,
+            layer_size=64000,
+        )
+
+        self.assertEqual(0.001, filter.max_false_positive_rate)
+        self.assertEqual(16, filter.num_hashes)
+        self.assertEqual(64000, filter.layer_size)
+        self.assertEqual(4000, filter.slice_size)
+
     def test_insert_and_exists(self):
         filter = BloomFilter()
 

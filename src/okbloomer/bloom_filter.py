@@ -110,34 +110,6 @@ class BloomFilter(object):
         """Return the estimated probability of recording a false positive."""
         return self.utilization**self._num_hashes
 
-    def merge(self, filter: Self) -> None:
-        """Merge this filter with another filter."""
-        if self._num_hashes != filter.num_hashes:
-            raise ValueError("Filters must have the same number of hash functions.")
-
-        if self._layer_size != filter.layer_size:
-            raise ValueError("Filters must have the same layer size.")
-
-        combined_false_positive_rate = self.false_positive_rate + filter.false_positive_rate
-
-        can_combine_heads = combined_false_positive_rate < self.max_false_positive_rate
-
-        a, b = self._layers.pop(), filter.layers.pop()
-
-        layers = self._layers + filter.layers
-
-        if can_combine_heads:
-            layer = np.bitwise_or(a, b)
-
-            layers.append(layer)
-
-        else:
-            layers.extend([a, b])
-
-        self._layers = layers
-        self._n += filter.n
-        self._m = len(layers) * self.layer_size
-
     def insert(self, token: str) -> None:
         """Insert a token into the filter"""
         offsets = self._hash(token)

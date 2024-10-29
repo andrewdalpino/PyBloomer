@@ -5,39 +5,40 @@ from okbloomer import BloomFilter
 
 from unittest import TestCase
 
+
 class TestBloomFilter(TestCase):
     def test_insert_and_exists(self):
         filter = BloomFilter()
 
         self.assertEqual(filter.false_positive_rate, 0)
 
-        self.assertFalse(filter.exists('foo'))
+        self.assertFalse(filter.exists("foo"))
 
-        filter.insert('foo')
+        filter.insert("foo")
 
-        self.assertTrue(filter.exists('foo'))
+        self.assertTrue(filter.exists("foo"))
         self.assertGreater(filter.false_positive_rate, 0)
 
-        self.assertFalse(filter.exists('bar'))
+        self.assertFalse(filter.exists("bar"))
 
-        filter.insert('bar')
+        filter.insert("bar")
 
-        self.assertTrue(filter.exists('bar'))
+        self.assertTrue(filter.exists("bar"))
         self.assertGreater(filter.false_positive_rate, 0)
 
-        self.assertFalse(filter.exists('baz'))
+        self.assertFalse(filter.exists("baz"))
 
     def test_exists_or_insert(self):
         filter = BloomFilter()
 
-        self.assertFalse(filter.exists_or_insert('foo'))
-        self.assertTrue(filter.exists_or_insert('foo'))
+        self.assertFalse(filter.exists_or_insert("foo"))
+        self.assertTrue(filter.exists_or_insert("foo"))
 
-        self.assertFalse(filter.exists_or_insert('bar'))
-        self.assertTrue(filter.exists_or_insert('bar'))
+        self.assertFalse(filter.exists_or_insert("bar"))
+        self.assertTrue(filter.exists_or_insert("bar"))
 
-        self.assertFalse(filter.exists_or_insert('baz'))
-        self.assertTrue(filter.exists_or_insert('baz'))
+        self.assertFalse(filter.exists_or_insert("baz"))
+        self.assertTrue(filter.exists_or_insert("baz"))
 
     def test_autoscaling(self):
         random.seed(1)
@@ -50,16 +51,18 @@ class TestBloomFilter(TestCase):
 
         self.assertEqual(filter.num_layers, 1)
 
-        filter.insert('foo')
+        filter.insert("foo")
 
         for i in range(0, 100000):
-            filter.insert(''.join(random.choice(string.ascii_letters) for j in range(20)))
+            filter.insert(
+                "".join(random.choice(string.ascii_letters) for j in range(20))
+            )
 
-        filter.insert('bar')
+        filter.insert("bar")
 
-        self.assertTrue(filter.exists('foo'))
-        self.assertTrue(filter.exists('bar'))
-        self.assertFalse(filter.exists('baz'))
+        self.assertTrue(filter.exists("foo"))
+        self.assertTrue(filter.exists("bar"))
+        self.assertFalse(filter.exists("baz"))
 
         self.assertEqual(filter.num_layers, 6)
         self.assertLessEqual(filter.false_positive_rate, 0.001)

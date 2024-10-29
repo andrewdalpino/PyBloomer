@@ -52,6 +52,9 @@ class TestBloomFilter(TestCase):
         self.assertFalse(filter.exists_or_insert("baz"))
         self.assertTrue(filter.exists_or_insert("baz"))
 
+        self.assertFalse(filter.exists_or_insert("qux"))
+        self.assertTrue(filter.exists_or_insert("qux"))
+
     def test_autoscaling(self):
         random.seed(1)
 
@@ -80,3 +83,32 @@ class TestBloomFilter(TestCase):
         self.assertLessEqual(filter.false_positive_rate, 0.001)
         self.assertLessEqual(filter.utilization, 1.0)
         self.assertGreater(filter.capacity, 0.0)
+
+    def test_merge(self):
+        a = BloomFilter()
+        b = BloomFilter()
+
+        a.insert('foo')
+        a.insert('bar')
+
+        b.insert('baz')
+        b.insert('qux')
+
+        self.assertTrue(a.exists("foo"))
+        self.assertTrue(a.exists("bar"))
+        self.assertFalse(a.exists("baz"))
+        self.assertFalse(a.exists("qux"))
+
+        self.assertFalse(b.exists("foo"))
+        self.assertFalse(b.exists("bar"))
+        self.assertTrue(b.exists("baz"))
+        self.assertTrue(b.exists("qux"))
+
+        a.merge(b)
+
+        self.assertTrue(a.exists("foo"))
+        self.assertTrue(a.exists("bar"))
+        self.assertTrue(a.exists("baz"))
+        self.assertTrue(a.exists("qux"))
+
+        self.assertEqual(a.num_layers, 1)

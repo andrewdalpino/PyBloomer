@@ -1,5 +1,9 @@
+from math import log
+
 import numpy as np
 import mmh3
+
+from typing import Self, List
 
 from nptyping import NDArray
 
@@ -51,9 +55,9 @@ class BloomFilter(object):
         self._num_hashes = num_hashes
         self._layer_size = layer_size
         self._slice_size = slice_size
-        self._layers: list[NDArray] = []
-        self._n = 0  # The number of bits currently stored in the filter.
-        self._m = 0  # The maximum number of bits that can be stored in the filter.
+        self._layers: List[NDArray] = []
+        self._n = 0
+        self._m = 0
 
         self._add_layer()
 
@@ -74,23 +78,65 @@ class BloomFilter(object):
         return self._slice_size
 
     @property
+    def layers(self) -> List[NDArray]:
+        return self._layers
+
+    @property
     def num_layers(self) -> int:
         return len(self._layers)
 
     @property
+    def n(self) -> int:
+        """Return the number of items currently stored in the filter."""
+        return self._n
+
+    @property
+    def m(self) -> int:
+        """Return the maximum number of bits that can be stored in the filter."""
+        return self._m
+
+    @property
     def utilization(self) -> float:
-        """Return the proportion of bits that are currently set"""
+        """Return the proportion of bits that are currently set."""
         return self._n / self._m
 
     @property
     def capacity(self) -> float:
-        """Return the proportion of bits that are currently not set"""
+        """Return the proportion of bits that are currently not set."""
         return 1.0 - self.utilization
 
     @property
     def false_positive_rate(self) -> float:
-        """Return the probability of recording a false positive"""
+        """Return the estimated probability of recording a false positive."""
         return self.utilization**self._num_hashes
+
+    def merge(self, filter: Self) -> None:
+        """Merge this filter with another filter."""
+        if self._num_hashes != filter.num_hashes:
+            raise ValueError("Filters must have the same number of hash functions.")
+
+        if self._layer_size != filter.layer_size:
+            raise ValueError("Filters must have the same layer size.")
+
+        combined_false_positive_rate = self.false_positive_rate + filter.false_positive_rate
+
+        can_combine_heads = combined_false_positive_rate < self.max_false_positive_rate
+
+        a, b = self._layers.pop(), filter.layers.pop()
+
+        layers = self._layers + filter.layers
+
+        if can_combine_heads:
+            layer = np.bitwise_or(a, b)
+
+            layers.append(layer)
+
+        else:
+            layers.extend([a, b])
+
+        self._layers = layers
+        self._n += filter.n
+        self._m = len(layers) * self.layer_size
 
     def insert(self, token: str) -> None:
         """Insert a token into the filter"""

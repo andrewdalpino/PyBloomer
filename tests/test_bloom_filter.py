@@ -17,7 +17,6 @@ class TestBloomFilter(TestCase):
         self.assertEqual(0.001, filter.max_false_positive_rate)
         self.assertEqual(16, filter.num_hashes)
         self.assertEqual(64000, filter.layer_size)
-        self.assertEqual(4000, filter.slice_size)
 
     def test_insert_and_exists(self):
         filter = BloomFilter()
@@ -83,3 +82,42 @@ class TestBloomFilter(TestCase):
         self.assertLessEqual(filter.false_positive_rate, 0.001)
         self.assertLessEqual(filter.utilization, 1.0)
         self.assertGreater(filter.capacity, 0.0)
+
+    def test_merge(self):
+        a = BloomFilter(max_false_positive_rate=0.001, layer_size=320000)
+
+        b = BloomFilter(max_false_positive_rate=0.001, layer_size=320000)
+
+        for filter in [a, b]:
+            for i in range(0, 20000):
+                filter.insert(
+                    "".join(random.choice(string.ascii_letters) for j in range(20))
+                )
+
+        a.insert("foo")
+        a.insert("bar")
+
+        b.insert("baz")
+        b.insert("qux")
+
+        self.assertTrue(a.exists("foo"))
+        self.assertTrue(a.exists("bar"))
+        self.assertFalse(a.exists("baz"))
+        self.assertFalse(a.exists("qux"))
+
+        self.assertFalse(b.exists("foo"))
+        self.assertFalse(b.exists("bar"))
+        self.assertTrue(b.exists("baz"))
+        self.assertTrue(b.exists("qux"))
+
+        a.merge(b)
+
+        self.assertTrue(a.exists("foo"))
+        self.assertTrue(a.exists("bar"))
+        self.assertTrue(a.exists("baz"))
+        self.assertTrue(a.exists("qux"))
+
+        self.assertEqual(a.num_layers, 3)
+        self.assertLessEqual(a.false_positive_rate, 0.001)
+        self.assertLessEqual(a.utilization, 1.0)
+        self.assertGreater(a.capacity, 0.0)

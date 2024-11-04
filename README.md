@@ -54,3 +54,4 @@ True
 
 ## References
 - [1] A. DalPino. (2021). OkBloomer, a novel autoscaling Bloom Filter [[link](https://github.com/andrewdalpino/OkBloomer)].
+- [2] K. Christensen, et al. A New Analysis of the False-Positive Rate of a Bloom Filter.

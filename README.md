@@ -23,9 +23,9 @@ pip install okbloomer
 ## Example Usage
 
 ```python
-import okbloomer
+from okbloomer import BloomFilter
 
-filter = okbloomer.BloomFilter(
+filter = BloomFilter(
     max_false_positive_rate=0.01,
     num_hashes=4,
     layer_size=32000000,
@@ -55,3 +55,4 @@ True
 ## References
 - [1] A. DalPino. (2021). OkBloomer, a novel autoscaling Bloom Filter [[link](https://github.com/andrewdalpino/OkBloomer)].
 - [2] K. Christensen, et al. A New Analysis of the False-Positive Rate of a Bloom Filter.
+- [3] A. Kirsch, et al. Less Hashing, Same Performance: Building a Better Bloom Filter, 2006.

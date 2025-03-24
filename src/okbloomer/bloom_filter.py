@@ -1,7 +1,5 @@
-import numpy as np
 import mmh3
-
-from typing import Self, List
+import numpy as np
 
 from nptyping import NDArray
 
@@ -57,7 +55,7 @@ class BloomFilter(object):
         self._num_hashes = num_hashes
         self._layer_size = layer_size
         self._slice_size = slice_size
-        self._layers: List[NDArray] = []
+        self._layers: list[NDArray] = []
         self._max_bits = 0
         self._max_bits_per_layer = max_bits_per_layer
         self._n = 0
@@ -78,7 +76,7 @@ class BloomFilter(object):
         return self._layer_size
 
     @property
-    def layers(self) -> List[NDArray]:
+    def layers(self) -> list[NDArray]:
         return self._layers
 
     @property
@@ -111,7 +109,7 @@ class BloomFilter(object):
         return self.utilization**self._num_hashes
 
     def insert(self, token: str) -> None:
-        """Insert a token into the filter"""
+        """Insert a token into the filter."""
 
         offsets = self._hash(token)
 
@@ -183,44 +181,8 @@ class BloomFilter(object):
 
         return exists
 
-    def merge(self, filter: Self) -> None:
-        """Merge this filter with another filter."""
-
-        if self._num_hashes != filter.num_hashes:
-            raise ValueError("Filters must have the same number of hash functions.")
-
-        if self._layer_size != filter.layer_size:
-            raise ValueError("Filters must have the same layer size.")
-
-        a, b = self._layers.pop(), filter.layers.pop()
-
-        layers = self._layers + filter.layers
-
-        a_num_bits, b_num_bits = np.sum(a), np.sum(b)
-
-        can_combine_heads = a_num_bits + b_num_bits <= self._max_bits_per_layer
-
-        if can_combine_heads:
-            layers.append(np.bitwise_or(a, b))
-
-            self._n += filter.n
-
-        else:
-            if a_num_bits < b_num_bits:
-                a, b = b, a
-
-            layers.extend([a, b])
-
-            self._n += filter.num_layers * self._max_bits_per_layer
-
-        num_layers = len(layers)
-
-        self._layers = layers
-        self._m = num_layers * self.layer_size
-        self._max_bits = num_layers * self._max_bits_per_layer
-
     def _add_layer(self) -> None:
-        """Add another layer to the filter for maintaining the false positivity rate below the threshold."""
+        """Add another layer to the filter."""
 
         layer = np.zeros(self._layer_size, dtype="bool")
 
@@ -229,8 +191,8 @@ class BloomFilter(object):
         self._m += self._layer_size
         self._max_bits += self._max_bits_per_layer
 
-    def _hash(self, token: str) -> list:
-        """Return a list of filter offsets from a given token."""
+    def _hash(self, token: str) -> list[int]:
+        """Return a list of filter offsets for a given token."""
 
         offsets = []
 
